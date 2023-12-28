@@ -64,3 +64,11 @@ function Slides({ slides }) {
 }
 
 export default Slides;
+
+const slides = [
+    { title: "Today's Workout Plan", text: "Today we're gonna do three fundamental exercises." },
+    { title: "First Exercise: Push-ups", text: "Do 10 push-ups." },
+    { title: "Second Exercise: Squats", text: "Do 20 squats." },
+    { title: "Third Exercise: Sit-ups", text: "Do 30 sit-ups." },
+    { title: "Great Job!", text: "You've completed the workout!" },
+  ];
