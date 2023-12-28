@@ -1,66 +1,103 @@
-import React, { useState } from 'react';
+import React from 'react'
 
-function Slides({slides}) {
-
-    const [activeSlideNo, setActiveSlideNo] = useState(0);
-    const [currentSlide, setCurrentSlide] = useState(slides[0]);
-    const [disabledPrev, setDisabledPrev] = useState(true);
-    const [disabledNext, setDisabledNext] = useState(false);
-    const [disabledRestart, setDisabledRestart] = useState(true);
-
-    const onClickNext = () => {
-      var curSlideNo = activeSlideNo;
-      
-      if(curSlideNo < slides.length-1) {
-        curSlideNo ++;
-        setActiveSlideNo(curSlideNo);
-        setCurrentSlide(slides[curSlideNo]);
-        setDisabledPrev(false);
-        setDisabledRestart(false);
-      }
-
-      if(curSlideNo === slides.length-1) {
-        setDisabledNext(true);
-      }
+class Slides extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      slide: this.props.slides[0],
+      index: 0,
+      restart: true,
+      prev: true,
+      next: false,
     }
+  }
 
-    const onClickPrev = () => {
-      var curSlideNo = activeSlideNo;
-      
-      if(curSlideNo > 0) {
-        curSlideNo --;
-        setActiveSlideNo(curSlideNo);
-        setCurrentSlide(slides[curSlideNo]);
-        setDisabledNext(false);
-      } 
-      if(curSlideNo === 0) {
-        setDisabledPrev(true);
-        setDisabledRestart(true);
-      }
+  Restart() {
+    this.setState({
+      slide: this.props.slides[0],
+      index: 0,
+      restart: true,
+      prev: true,
+      next: false,
+    })
+  }
+
+  Prev() {
+    let cur = this.state.index
+
+    if (this.state.index - 1 === 0) {
+      this.setState({
+        slide: this.props.slides[cur - 1],
+        index: cur - 1,
+        restart: true,
+        prev: true,
+        next: false,
+      })
+    } else {
+      this.setState({
+        slide: this.props.slides[cur - 1],
+        index: cur - 1,
+        next: false,
+      })
     }
+  }
 
-    const onClickRestart = () => {
-      setActiveSlideNo(0);
-      setCurrentSlide(slides[0]);
-      setDisabledPrev(true);
-      setDisabledNext(false);
-      setDisabledRestart(true);
+  Next() {
+    let cur = this.state.index
+
+    if (this.state.index + 1 === 5) {
+      this.setState({
+        slide: this.props.slides[cur + 1],
+        index: cur + 1,
+        restart: false,
+        prev: false,
+        next: true,
+      })
+    } else {
+      this.setState({
+        slide: this.props.slides[cur + 1],
+        index: cur + 1,
+        restart: false,
+        prev: false,
+        next: false,
+      })
     }
+  }
 
+  render() {
     return (
-        <div>
-            <div id="navigation" className="text-center">
-                <button data-testid="button-restart" className="small outlined" onClick={() => onClickRestart()} disabled={disabledRestart}>Restart</button>
-                <button data-testid="button-prev" className="small" onClick={() => onClickPrev()} disabled={disabledPrev}>Prev</button>
-                <button data-testid="button-next" className="small" onClick={() => onClickNext()} disabled={disabledNext}>Next</button>
-            </div>
-            <div id="slide" className="card text-center">
-                <h1 data-testid="title">{currentSlide.title}</h1>
-                <p data-testid="text">{currentSlide.text}</p>
-            </div>
+      <div>
+        <div id='navigation' className='text-center'>
+          <button
+            onClick={this.Restart.bind(this)}
+            disabled={this.state.restart}
+            data-testid='button-restart'
+            className='small outlined'>
+            Restart
+          </button>
+          <button
+            data-testid='button-prev'
+            disabled={this.state.prev}
+            className='small'
+            onClick={this.Prev.bind(this)}>
+            Prev
+          </button>
+          <button
+            data-testid='button-next'
+            disabled={this.state.next}
+            className='small'
+            onClick={this.Next.bind(this)}>
+            Next
+          </button>
         </div>
-    );
 
+        <div id='slide' className='card text-center'>
+          <h1 data-testid='title'> {this.state.slide.title} </h1>
+          <p data-testid='text'>{this.state.slide.text}</p>
+        </div>
+      </div>
+    )
+  }
 }
 
-export default Slides;
+export default Slides
