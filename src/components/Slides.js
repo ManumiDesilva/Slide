@@ -1,74 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-function Slides({ slides }) {
-    const [currentSlide, setCurrentSlide] = useState(0);
+function Slides({slides}) {
 
-    const handleRestart = () => {
-        setCurrentSlide(0);
-    };
+    const [activeSlideNo, setActiveSlideNo] = useState(0);
+    const [currentSlide, setCurrentSlide] = useState(slides[0]);
+    const [disabledPrev, setDisabledPrev] = useState(true);
+    const [disabledNext, setDisabledNext] = useState(false);
+    const [disabledRestart, setDisabledRestart] = useState(true);
 
-    const handleNext = () => {
-        if (currentSlide < slides.length - 1) {
-            setCurrentSlide(currentSlide + 1);
-        }
-    };
+    const onClickNext = () => {
+      var curSlideNo = activeSlideNo;
+      
+      if(curSlideNo < slides.length-1) {
+        curSlideNo ++;
+        setActiveSlideNo(curSlideNo);
+        setCurrentSlide(slides[curSlideNo]);
+        setDisabledPrev(false);
+        setDisabledRestart(false);
+      }
 
-    const handlePrev = () => {
-        if (currentSlide > 0) {
-            setCurrentSlide(currentSlide - 1);
-        }
-    };
+      if(curSlideNo === slides.length-1) {
+        setDisabledNext(true);
+      }
+    }
 
-    useEffect(() => {
-        // Reset to first slide when slides change
-        setCurrentSlide(0);
-    }, [slides]);
+    const onClickPrev = () => {
+      var curSlideNo = activeSlideNo;
+      
+      if(curSlideNo > 0) {
+        curSlideNo --;
+        setActiveSlideNo(curSlideNo);
+        setCurrentSlide(slides[curSlideNo]);
+        setDisabledNext(false);
+      } 
+      if(curSlideNo === 0) {
+        setDisabledPrev(true);
+        setDisabledRestart(true);
+      }
+    }
+
+    const onClickRestart = () => {
+      setActiveSlideNo(0);
+      setCurrentSlide(slides[0]);
+      setDisabledPrev(true);
+      setDisabledNext(false);
+      setDisabledRestart(true);
+    }
 
     return (
         <div>
             <div id="navigation" className="text-center">
-                <button
-                    data-testid="button-restart"
-                    className="small outlined"
-                    onClick={handleRestart}
-                    disabled={currentSlide === 0}
-                    style={{ backgroundColor: 'green', color: 'white' }}
-                >
-                    Restart
-                </button>
-                <button
-                    data-testid="button-prev"
-                    className="small"
-                    onClick={handlePrev}
-                    disabled={currentSlide === 0}
-                    style={{ backgroundColor: 'green', color: 'white' }}
-                >
-                    Prev
-                </button>
-                <button
-                    data-testid="button-next"
-                    className="small"
-                    onClick={handleNext}
-                    disabled={currentSlide === slides.length - 1}
-                    style={{ backgroundColor: 'green', color: 'white' }}
-                >
-                    Next
-                </button>
+                <button data-testid="button-restart" className="small outlined" onClick={() => onClickRestart()} disabled={disabledRestart}>Restart</button>
+                <button data-testid="button-prev" className="small" onClick={() => onClickPrev()} disabled={disabledPrev}>Prev</button>
+                <button data-testid="button-next" className="small" onClick={() => onClickNext()} disabled={disabledNext}>Next</button>
             </div>
-            <div id="slide" className="card text-center" style={{ backgroundColor: 'white' }}>
-                <h1 data-testid="title">{slides[currentSlide]?.title}</h1>
-                <p data-testid="text">{slides[currentSlide]?.text}</p>
+            <div id="slide" className="card text-center">
+                <h1 data-testid="title">{currentSlide.title}</h1>
+                <p data-testid="text">{currentSlide.text}</p>
             </div>
         </div>
     );
+
 }
 
 export default Slides;
-
-const slides = [
-    { title: "Today's Workout Plan", text: "Today we're gonna do three fundamental exercises." },
-    { title: "First Exercise: Push-ups", text: "Do 10 push-ups." },
-    { title: "Second Exercise: Squats", text: "Do 20 squats." },
-    { title: "Third Exercise: Sit-ups", text: "Do 30 sit-ups." },
-    { title: "Great Job!", text: "You've completed the workout!" },
-  ];
